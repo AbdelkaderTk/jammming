@@ -3,7 +3,7 @@ const authorizationUrl = 'https://accounts.spotify.com/authorize?'
 const clientId = "b9933fd974314dfda2dba0f734a34afa";
 const responseType = "token";
 const redirectUri = "http://localhost:3000/";
-const scope = "user-read-private"
+const scope = "user-read-private playlist-modify playlist-modify-private";
 const searchUrl = 'https://api.spotify.com/v1/search?';
 let accessToken;
 
@@ -79,22 +79,22 @@ const Spotify = {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({name: playlistName})
+    }).then(response1 => {
+      if (response1.ok) {
+        return response1.json();
+      }
+      throw new Error('Request failed!');
+    }, networkError => {
+      console.log(networkError.message)
+    }).then(jsonResponse => {
+      const playlistId = jsonResponse.id;
+      playlistTracksEndpoint = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
+      return fetch(playlistTracksEndpoint, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      method: 'POST',
+      body: JSON.stringify({uris: trackUris})
+      });
     })
-  }).then(response => {
-    if (response.ok) {
-      return response.json();
-    }
-    throw new Error('Request failed!');
-  }, networkError => {
-    console.log(networkError.message)
-  }).then(jsonResponse => {
-    const playlistId = jsonResponse.id;
-    playlistTracksEndpoint = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
-    return fetch(playlistTracksEndpoint, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-    method: 'POST',
-    body: JSON.stringify({uris: trackUris})
-    });
   })
   }
 }

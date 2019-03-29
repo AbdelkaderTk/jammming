@@ -9,6 +9,7 @@ class Playlist extends React.Component {
         <input type='text' value={this.props.playlistName.value} onChange={this.props.onChange}/>
         <div className="TrackList">
           {this.props.playlist.map(track => {
+            // Build playlist from the playlist state (array)
             return (
               <Track
                 key={track.id}
@@ -16,6 +17,7 @@ class Playlist extends React.Component {
                 name={track.name}
                 artists={track.artists}
                 album={track.album}
+                // Informations specific to the playlist tracks
                 uri={track.uri}
                 onClick={this.props.onClick}
                 linkContent='-'

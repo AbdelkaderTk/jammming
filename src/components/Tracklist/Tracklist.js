@@ -9,6 +9,7 @@ class TrackList extends React.Component {
         <h2>Results</h2>
         <div className="TrackList">
           {this.props.tracklist.map(track => {
+            // Build tracklist from the tracklist state (array)
             return (
                 <Track
                   key={track.id}
@@ -16,6 +17,7 @@ class TrackList extends React.Component {
                   name={track.name}
                   artists={track.artists}
                   album={track.album}
+                  // Informations specific to the tracklist tracks
                   onClick={this.props.onClick}
                   linkContent='+'
                 />

@@ -6,6 +6,7 @@ class Track extends React.Component {
     super(props);
     this.handleClick = this.handleClick.bind(this);
   }
+  // Select and pass the track ID on click
   handleClick(e) {
       const ItemId = `${this.props.id}`;
       this.props.onClick(ItemId);
