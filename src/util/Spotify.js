@@ -1,9 +1,12 @@
-// Spotify API urls
+// Necessary element to get a Spotify API token
 const authorizationUrl = 'https://accounts.spotify.com/authorize?'
 const clientId = "b9933fd974314dfda2dba0f734a34afa";
 const responseType = "token";
 const redirectUri = "http://localhost:3000/";
+      // These scopes are necessary to ask for a token which permit to get tracks and save a playlist.
 const scope = "user-read-private playlist-modify playlist-modify-private";
+
+// Necessary element to search tracks
 const searchUrl = 'https://api.spotify.com/v1/search?';
 let accessToken;
 
@@ -17,7 +20,7 @@ const Spotify = {
     if (URLToken && tokenExpiration) {
       accessToken = URLToken[1];
       const expires = Number(tokenExpiration[1]);
-      window.setTimeout(()=> accessToken = '', 60000);
+      window.setTimeout(()=> accessToken = '', expires * 1000);
       window.history.pushState('Access Token', null, '/');
       return accessToken;
     } else {
@@ -28,6 +31,7 @@ const Spotify = {
   async trackRequest() {
     this.getAccessToken();
     const inputValue = document.querySelector('#searchInput').value;
+    // Handles query containing spaces
     const inputValueQuery = inputValue.replace(/ /g, '+');
     const searchEndpoint = `${searchUrl}q=${inputValueQuery}&type=track`;
     try {
@@ -53,13 +57,11 @@ const Spotify = {
     }
   },
   savePlaylist(playlistName, trackUris) {
-    if (!playlistName || !trackUris.length) {return;}
     this.getAccessToken();
     let userId;
-    let userIdEndpoint = 'https://api.spotify.com/v1/me';
-    let playlistEndpoint;
-    let playlistTracksEndpoint;
+    const userIdEndpoint = 'https://api.spotify.com/v1/me';
     return fetch(userIdEndpoint, {
+      // Get the user ID from Spotify
       headers: {
         Authorization: `Bearer ${accessToken}`
       }}).then(response => {
@@ -71,7 +73,8 @@ const Spotify = {
       console.log(networkError.message)
     }).then(jsonResponse => {
       userId = jsonResponse.id;
-      playlistEndpoint = `https://api.spotify.com/v1/users/${userId}/playlists`;
+      // Use the user ID to create a playlist and get the playlist ID
+      const playlistEndpoint = `https://api.spotify.com/v1/users/${userId}/playlists`;
       return fetch(playlistEndpoint, {
         method: 'POST',
         headers: {
@@ -79,16 +82,17 @@ const Spotify = {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({name: playlistName})
-    }).then(response1 => {
-      if (response1.ok) {
-        return response1.json();
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
       }
       throw new Error('Request failed!');
     }, networkError => {
       console.log(networkError.message)
     }).then(jsonResponse => {
       const playlistId = jsonResponse.id;
-      playlistTracksEndpoint = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
+      // Add tracks to the playlist (using the user ID and the playlist ID)
+      const playlistTracksEndpoint = `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`;
       return fetch(playlistTracksEndpoint, {
       headers: { Authorization: `Bearer ${accessToken}` },
       method: 'POST',

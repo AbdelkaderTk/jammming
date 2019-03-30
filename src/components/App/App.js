@@ -28,12 +28,15 @@ class App extends React.Component {
     });
   }
   addTrack(newPlayListItemId) {
+    // Get the track from tracklist on click with the id
     const newPlayListItem = this.state.tracklist.filter(track => {
         return track.id == newPlayListItemId;
     });
+    // Checks if this track is already included in the playlist
     const isIncluded = this.state.playlist.findIndex(track => {
         return track.id == newPlayListItemId;
     })
+    // Updates playlist state if the track is not already included in the playlist
     if (isIncluded == -1) {
       this.setState(prevState => ({
         playlist: [...prevState.playlist, newPlayListItem[0]]
@@ -41,6 +44,7 @@ class App extends React.Component {
     }
   }
   removeTrack(playListItemId) {
+    // On click, filter the playlist to keep only the tracks which does not correspond to the id.
     const newPlaylist = this.state.playlist.filter(track => {
         return track.id != playListItemId;
     });
@@ -53,7 +57,10 @@ class App extends React.Component {
   }
   savePlaylist() {
     const trackURIs = this.state.playlist.map(track => track.uri);
-    Spotify.savePlaylist(this.state.playlistName.value, trackURIs
+    const playlistName = this.state.playlistName.value;
+    // Checks if the playlist has a name and is not empty before saving (otherwise error because of .then)
+    if (!playlistName || !trackURIs.length) {return;};
+    Spotify.savePlaylist(playlistName, trackURIs
       ).then(() => {
         this.setState({
         playlistName: {value: "New Playlist"},
