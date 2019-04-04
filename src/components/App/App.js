@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import TrackList from '../Tracklist/Tracklist.js';
-import Track from '../Track/Track.js';
 import SearchBar from '../Searchbar/Searchbar.js';
 import Playlist from '../Playlist/Playlist.js';
 import Spotify from '../../util/Spotify.js';
@@ -20,8 +19,8 @@ class App extends React.Component {
     this.changePlaylistName = this.changePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
   }
-  searchResults() {
-    Spotify.trackRequest().then(tracksArray => {
+  searchResults(searchValue) {
+    Spotify.trackRequest(searchValue).then(tracksArray => {
       this.setState({
         tracklist: tracksArray
       })

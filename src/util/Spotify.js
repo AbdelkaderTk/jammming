@@ -28,9 +28,9 @@ const Spotify = {
       window.location.href = authEndpoint;
     }
   },
-  async trackRequest() {
+  async trackRequest(inputValue) {
     this.getAccessToken();
-    const inputValue = document.querySelector('#searchInput').value;
+    //const inputValue = document.querySelector('#searchInput').value;
     // Handles query containing spaces
     const inputValueQuery = inputValue.replace(/ /g, '+');
     const searchEndpoint = `${searchUrl}q=${inputValueQuery}&type=track`;
